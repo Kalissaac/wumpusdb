@@ -1,0 +1,27 @@
+{
+  "name": "wumpusdb",
+  "version": "1.0.0",
+  "description": "Discord as a Database",
+  "main": "src/index.js",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6",
+    "standard": "^16.0.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kalissaac/wumpusdb.git"
+  },
+  "author": "Kalissaac",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kalissaac/wumpusdb/issues"
+  },
+  "homepage": "https://github.com/Kalissaac/wumpusdb#readme"
+}

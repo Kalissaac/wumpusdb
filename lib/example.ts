@@ -1,12 +1,19 @@
+import Discord from 'discord.js'
+import * as Wumpus from './wumpusdb'
+
 require('dotenv').config()
-const Discord = require('discord.js')
+
 const client = new Discord.Client()
 
-const Wumpus = require('./wumpusdb')
+let db: Wumpus.DB
 
 client.on('ready', async () => {
-  const db = new Wumpus.DB(client)
+  db = new Wumpus.DB(client)
   console.log(await db.getCollection('781701087073402881'))
+})
+
+client.on('message', async (message: Discord.Message) => {
+
 })
 
 client.login(process.env.DISCORD_TOKEN)

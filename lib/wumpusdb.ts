@@ -1,4 +1,4 @@
-const Discord = require('discord.js')
+import type Discord from 'discord.js'
 
 class DB {
   client
@@ -7,7 +7,7 @@ class DB {
    *
    * @param {Discord.Client} client
    */
-  constructor (client) { // eslint-disable-line
+  constructor (client: Discord.Client) {
     this.client = client
   }
 
@@ -16,17 +16,17 @@ class DB {
    * @param {Discord.Snowflake} collection
    * @returns {Promise<Collection>} Requested collection
    */
-  async getCollection (collection) {
+  async getCollection (collection: Discord.Snowflake) {
     try {
       /**
        * @type {Discord.TextChannel}
        */
       const channel = await this.client.channels.fetch(collection)
       // channel.send('||DOCUMENT INSERTED AT ' + new Date().toISOString() + '||\n' + Math.floor(Math.random() * Math.floor(10000000)) + '\n---\n' + JSON.stringify({ hi: 'jo', sup: 'bobby' }))
-      const messages = (await channel.messages.fetch({ limit: 100 })).filter(m => m.author.id === this.client.user.id)
+      const messages = (await channel.messages.fetch({ limit: 100 })).filter((m: Discord.Message) => m.author.id === this.client.user.id)
       const data = new Map()
-      messages.each((message) => {
-        const document = parseMessage(message)
+      messages.each((message: Discord.Message) => {
+        const document = parseMessage(message, collection)
         if (!document) return
         data.set(document.id, document)
       })
@@ -40,14 +40,17 @@ class DB {
 /**
  * Parse a Discord message into a document
  * @param {Discord.Message} message
+ *
  * @returns {Document}
  */
-function parseMessage (message) {
+function parseMessage (message: Discord.Message, collection) {
   const data = {
     information: {
       _meta: {
+        collection: collection.id,
         locator: message.id,
-        raw: message.content
+        raw: message.content,
+        message: message
       }
     }
   }
@@ -58,7 +61,7 @@ function parseMessage (message) {
     ...data.information,
     ...JSON.parse(tokens[3])
   }
-  return new Document(data)
+  return new Document(data, collection)
 }
 
 class Collection {
@@ -69,7 +72,7 @@ class Collection {
    * @param {Discord.Snowflake} id
    * @param {Map<string, Document>} documents
    */
-  constructor (id, documents) {
+  constructor (id: Discord.Snowflake, documents) {
     this.id = id
     this.documents = documents
   }
@@ -79,34 +82,52 @@ class Collection {
    * @param {string} document
    * @returns {Document}
    */
-  getDocument (document) {
+  getDocument (document: string) {
     return this.documents[document]
-  }
-
-  /**
-   * Saves any changes made to the collection in the database
-   * @param {number} retry How many times to retry saving if it fails
-   * @returns {Promise<boolean>} Whether the save was successful
-   */
-  async save (retry) {
-    return true
   }
 }
 
 class Document {
   id
-  data
+  collection
+  #data
+  #message
 
-  constructor (data) {
+  constructor (data, collection) {
     this.id = data.id
-    this.data = data.information
+    this.collection = collection
+    this.#data = data.information
+    this.#message = this.#data._meta.message
+  }
+
+  get data () {
+    return this.#data
   }
 
   getField (field) {
-    return this.data[field]
+    return this.#data[field]
+  }
+
+  /**
+   * Saves changes made to the document in the database
+   * @param {Object} data The data to save
+   * @param {number} retry How many times to retry saving if it fails
+   * @returns {Promise<boolean>} Whether the save was successful
+   */
+  async update (data, retry) {
+    return true
+  }
+
+  /**
+   * Deletes the document from the collection
+   * @param {number} retry How many times to retry saving if it fails
+   * @returns {Promise<boolean>} Whether the save was successful
+   */
+  async delete (retry) {
+    return this.#data._meta.message.delete()
   }
 }
 
-module.exports = exports = {
+export {
   DB
 }

@@ -45,19 +45,12 @@ export default class DB {
  * @returns {Document}
  */
 function parseMessage (message: Discord.Message, collection: Discord.Snowflake): Document {
-  const data = {
-    meta: {
-      collection: collection,
-      locator: message.id,
-      message: message
-    },
-    information: {},
-    id: ''
-  }
   const tokens = message.content.split('\n')
-  data.id = tokens[1]
-  data.information = JSON.parse(tokens[3])
-  return new Document(data)
+  return new Document({
+    information: JSON.parse(tokens[3]),
+    message,
+    id: tokens[1]
+  })
 }
 
 /**

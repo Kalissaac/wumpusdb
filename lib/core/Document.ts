@@ -2,12 +2,8 @@
 import * as Discord from 'discord.js'
 
 interface RawDocumentData {
-  meta: {
-    collection: Discord.Snowflake,
-    locator: Discord.Snowflake,
-    message: Discord.Message
-  },
   information: { [key: string]: any },
+  message: Discord.Message,
   id: string
 }
 
@@ -15,14 +11,12 @@ export default class Document {
   id
   collection
   #data
-  #meta
   #message
 
   constructor (data: RawDocumentData) {
     this.id = data.id
-    this.#meta = data.meta
-    this.#message = this.#meta.message
-    this.collection = this.#meta.collection
+    this.#message = data.message
+    this.collection = this.#message.channel.id
     this.#data = data.information
   }
 

@@ -13,12 +13,14 @@
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.7",
     "standard": "^16.0.3",
-    "ts-node-dev": "^1.1.1"
+    "ts-node-dev": "^1.1.1",
+    "typedoc": "^0.20.16"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
-    "dev": "npx ts-node-dev --respawn ./lib/example.ts --transpileOnly"
+    "dev": "ts-node-dev --respawn ./lib/example.ts --transpileOnly",
+    "doc": "typedoc ./lib/wumpusdb.ts"
   },
   "repository": {
     "type": "git",

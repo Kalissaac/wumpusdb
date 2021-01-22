@@ -10,6 +10,8 @@ interface RawDocumentData {
 export default class Document {
   id
   collection
+  createdAt
+  lastEdited
   #data
   #message
 
@@ -17,6 +19,8 @@ export default class Document {
     this.id = data.id
     this.#message = data.message
     this.collection = this.#message.channel.id
+    this.createdAt = this.#message.createdAt
+    this.lastEdited = this.#message.editedAt
     this.#data = data.information
   }
 

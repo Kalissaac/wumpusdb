@@ -1,6 +1,6 @@
-import Collection from '@core/Collection'
-import Document from '@core/Document'
-import type Discord from 'discord.js'
+import Collection from '../core/Collection'
+import Document from '../core/Document'
+import * as Discord from 'discord.js'
 
 export default class DB {
   client

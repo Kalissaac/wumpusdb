@@ -1,5 +1,5 @@
 // import type Collection from '@core/Collection'
-import type Discord from 'discord.js'
+import * as Discord from 'discord.js'
 
 interface RawDocumentData {
   meta: {

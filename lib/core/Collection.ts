@@ -7,8 +7,8 @@ export default class Collection {
   #channel
 
   /**
-   * @param {Discord.TextChannel} channel
-   * @param {Map<string, Document>} documents
+   * @param channel Discord channel linked to the collection
+   * @param documents Documents in collection
    */
   constructor (channel: Discord.TextChannel, documents: Map<string, Document>) {
     this.#channel = channel
@@ -18,8 +18,8 @@ export default class Collection {
 
   /**
    * Retrieves a document from the collection
-   * @param {string} document
-   * @returns {Document}
+   * @param document Document ID
+   * @returns Requested document
    */
   async getDocument (document: string): Promise<Document> {
     const requestedDocument = this.documents.get(document)
@@ -30,7 +30,29 @@ export default class Collection {
     }
   }
 
-  async insertDocument (id: string, data: Object) {
-    // channel.send('||DOCUMENT INSERTED AT ' + new Date().toISOString() + '||\n' + Math.floor(Math.random() * Math.floor(10000000)) + '\n---\n' + JSON.stringify({ hi: 'jo', sup: 'bobby' }))
+  /**
+   * Inserts a new document into the collection
+   * @param id Document ID
+   * @param rawData Data in Document body
+   */
+  async insertDocument (id: string, rawData: Object) {
+    if (this.documents.has(id)) return Promise.reject(new Error(`Collection already has document with ID "${id}"`))
+
+    try {
+      const messageContent = [`||DOCUMENT INSERTED AT ${new Date().toISOString()}||`, id, '---', JSON.stringify(rawData)]
+      const message = await this.#channel.send(messageContent.join('\n'))
+
+      const data = {
+        information: rawData,
+        message,
+        id
+      }
+
+      const document = new Document(data)
+      this.documents.set(id, document)
+      return document
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }

@@ -7,7 +7,7 @@ export default class DB {
 
   /**
    * Initializes a DB instance
-   * @param {Discord.Client} client
+   * @param client
    */
   constructor (client: Discord.Client) {
     this.client = client
@@ -15,8 +15,8 @@ export default class DB {
 
   /**
    * Retrieves a collection in the database
-   * @param {Discord.Snowflake} collection
-   * @returns {Promise<Collection>} Requested collection
+   * @param collection
+   * @returns Requested collection
    */
   async getCollection (collection: Discord.Snowflake): Promise<Collection> {
     try {
@@ -40,9 +40,8 @@ export default class DB {
 
 /**
  * Parse a Discord message into a document
- * @param {Discord.Message} message
- *
- * @returns {Document}
+ * @param message
+ * @returns A document
  */
 function parseMessage (message: Discord.Message, collection: Discord.Snowflake): Document {
   const tokens = message.content.split('\n')

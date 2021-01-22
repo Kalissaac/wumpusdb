@@ -34,8 +34,8 @@ export default class Document {
 
   /**
    * Saves changes made to the document in the database
-   * @param {{ [key: string]: any }} data The data to save (this will replace all data in a document)
-   * @returns {Promise<boolean>} Whether the update was successful
+   * @param data The data to save (this will replace all data in a document)
+   * @returns Whether the update was successful
    */
   async update (data: { [key: string]: any }): Promise<boolean> {
     try {
@@ -52,7 +52,7 @@ export default class Document {
 
   /**
    * Deletes the document from the collection
-   * @returns {Promise<boolean>} Whether the deletion was successful
+   * @returns Whether the deletion was successful
    */
   async delete (): Promise<boolean> {
     try {

@@ -9,7 +9,12 @@ let db: Wumpus.DB
 
 client.on('ready', async () => {
   db = new Wumpus.DB(client)
-  console.log(await db.getCollection('781701087073402881'))
+  const collection = await db.getCollection('781701087073402881')
+  const doc = await collection.insertDocument(Math.floor(Math.random() * 1000000) + 'n', { hey: 'sup' })
+  doc.update({ john: 'bob' })
+  const doc2 = await collection.getDocument(doc.id)
+  console.log(doc.data === doc2.data)
+  doc.delete()
 })
 
 client.on('message', async (message: Discord.Message) => {

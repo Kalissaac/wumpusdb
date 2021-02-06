@@ -1,5 +1,5 @@
-// import type Collection from '@core/Collection'
 import * as Discord from 'discord.js'
+// import type Collection from './Collection'
 
 interface RawDocumentData {
   information: { [key: string]: any },

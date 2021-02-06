@@ -1,5 +1,5 @@
-import Document from '../core/Document'
 import * as Discord from 'discord.js'
+import Document from './Document'
 
 export default class Collection {
   id

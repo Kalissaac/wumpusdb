@@ -1,9 +1,9 @@
-import * as Discord from 'discord.js'
 // import type Collection from './Collection'
+import type { Message as DiscordMessage } from 'discord.js'
 
 interface RawDocumentData {
   information: { [key: string]: any },
-  message: Discord.Message,
+  message: DiscordMessage,
   id: string
 }
 

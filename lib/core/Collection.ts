@@ -1,5 +1,5 @@
-import * as Discord from 'discord.js'
 import Document from './Document'
+import type { TextChannel as DiscordTextChannel } from 'discord.js'
 
 export default class Collection {
   id
@@ -10,7 +10,7 @@ export default class Collection {
    * @param channel Discord channel linked to the collection
    * @param documents Documents in collection
    */
-  constructor (channel: Discord.TextChannel, documents: Map<string, Document>) {
+  constructor (channel: DiscordTextChannel, documents: Map<string, Document>) {
     this.#channel = channel
     this.id = this.#channel.id
     this.documents = documents

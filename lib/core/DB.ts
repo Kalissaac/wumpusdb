@@ -22,7 +22,7 @@ export default class DB {
       const channel = await this.client.createChannel(database, referenceName)
       return await this.getCollection(channel.id)
     } catch (error) {
-      return Promise.reject(error)
+      throw new Error(error)
     }
   }
 
@@ -44,7 +44,7 @@ export default class DB {
 
       return new Collection(this.client, collection, data)
     } catch (error) {
-      return Promise.reject(error)
+      throw new Error(error)
     }
   }
 }

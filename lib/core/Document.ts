@@ -52,7 +52,7 @@ export default class Document {
       this.#data = data
       return true
     } catch (error) {
-      return Promise.reject(error)
+      throw new Error(error)
     }
   }
 
@@ -65,7 +65,7 @@ export default class Document {
       await this.#client.deleteMessage(this.collection, this.#message.id)
       return true
     } catch (error) {
-      return Promise.reject(error)
+      throw new Error(error)
     }
   }
 }

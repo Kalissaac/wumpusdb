@@ -27,7 +27,7 @@ export default class Collection {
     if (requestedDocument) {
       return requestedDocument
     } else {
-      return Promise.reject(new Error('Unable to retrieve document'))
+      throw new Error('Unable to retrieve document')
     }
   }
 
@@ -36,8 +36,8 @@ export default class Collection {
    * @param documentID Document ID
    * @param rawData Data in Document body
    */
-  async insertDocument (documentID: string, rawData: Object) {
-    if (this.documents.has(documentID)) return Promise.reject(new Error(`Collection already has document with ID "${documentID}"`))
+  async insertDocument (documentID: string, rawData: Object): Promise<Document> {
+    if (this.documents.has(documentID)) throw new Error(`Collection already has document with ID "${documentID}"`)
 
     try {
       const messageContent = [`||DOCUMENT INSERTED AT ${new Date().toISOString()}||`, documentID, '---', JSON.stringify(rawData)]
@@ -53,7 +53,7 @@ export default class Collection {
       this.documents.set(documentID, document)
       return document
     } catch (error) {
-      return Promise.reject(error)
+      throw new Error(error)
     }
   }
 }

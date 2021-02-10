@@ -6,18 +6,18 @@ const baseUrl = 'https://discord.com/api/v8'
 export type Snowflake = string
 
 export interface Message {
-  id: Snowflake,
-  channel_id: string,
-  guild_id?: string,
-  author: any,
-  member: any,
-  content: string,
-  timestamp: number,
+  id: Snowflake
+  channel_id: string
+  guild_id?: string
+  author: any
+  member: any
+  content: string
+  timestamp: number
   edited_timestamp: number
 }
 
 export interface Channel {
-  id: Snowflake,
+  id: Snowflake
   name: string
 }
 
@@ -27,7 +27,7 @@ export default class Discord {
 
   constructor (authToken: string, withWebSocket = true) {
     this.authToken = authToken
-    if (withWebSocket) this.#initializeSocket()
+    if (withWebSocket) this.#initializeSocket().catch(console.error)
   }
 
   #sendRequest = async (path: string, method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: any): Promise<any> => {
@@ -44,12 +44,12 @@ export default class Discord {
       return await request.json()
     } else {
       console.error(await request.json())
-      return Promise.reject(request.statusText)
+      throw new Error(request.statusText)
     }
   }
 
-  #initializeSocket = async () => {
-    const gateway = await this.#sendRequest('/gateway/bot', 'GET')
+  #initializeSocket = async (): Promise<void> => {
+    const gateway = await this.#sendRequest('/gateway/bot', 'GET') as { url: string }
     this.#socket = new WebSocket(gateway.url + '?v=8&encoding=json')
 
     let sequenceNumber: number
@@ -73,9 +73,9 @@ export default class Discord {
         d: {
           token: this.authToken,
           properties: {
-            '$os': 'linux',
-            '$browser': '',
-            '$device': ''
+            $os: 'linux',
+            $browser: '',
+            $device: ''
           },
           intents: 0
         }
@@ -86,8 +86,8 @@ export default class Discord {
       console.log('[WebSocket] connection open')
     })
     this.#socket.on('message', e => {
-      console.log('[WebSocket] message recieved: ', e.toString())
-      const data = JSON.parse(e.toString())
+      console.log('[WebSocket] message recieved: ', e)
+      const data = JSON.parse(e.toString()) // eslint-disable-line @typescript-eslint/no-base-to-string
       switch (data.op) {
         case 0:
           sequenceNumber = data.s

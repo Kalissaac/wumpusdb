@@ -2,8 +2,8 @@
 import Discord, { Message as DiscordMessage } from '../helper/discord'
 
 interface RawDocumentData {
-  information: { [key: string]: any },
-  message: DiscordMessage,
+  information: { [key: string]: any }
+  message: DiscordMessage
   id: string
 }
 
@@ -30,11 +30,11 @@ export default class Document {
     this.#data = data.information
   }
 
-  get data () {
+  get data (): any {
     return this.#data
   }
 
-  getField (field: string) {
+  getField (field: string): any {
     return this.#data[field]
   }
 

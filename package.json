@@ -4,9 +4,7 @@
   "description": "Discord as a Database",
   "main": "src/index.js",
   "dependencies": {
-    "discord.js": "^12.5.1",
     "node-fetch": "^2.6.1",
-    "typescript": "^4.1.3",
     "ws": "^7.4.3"
   },
   "devDependencies": {
@@ -19,7 +17,8 @@
     "nodemon": "^2.0.7",
     "standard": "^16.0.3",
     "ts-node-dev": "^1.1.1",
-    "typedoc": "^0.20.16"
+    "typedoc": "^0.20.16",
+    "typescript": "^4.1.4"
   },
   "scripts": {
     "test": "mocha",

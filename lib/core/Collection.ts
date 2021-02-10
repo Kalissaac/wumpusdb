@@ -1,18 +1,19 @@
 import Document from './Document'
-import type { TextChannel as DiscordTextChannel } from 'discord.js'
+import Discord, { Snowflake } from '../helper/discord'
 
 export default class Collection {
   id
   documents
-  #channel
+  #client
 
   /**
+   * @param client Discord client
    * @param channel Discord channel linked to the collection
    * @param documents Documents in collection
    */
-  constructor (channel: DiscordTextChannel, documents: Map<string, Document>) {
-    this.#channel = channel
-    this.id = this.#channel.id
+  constructor (client: Discord, channel: Snowflake, documents: Map<string, Document>) {
+    this.#client = client
+    this.id = channel
     this.documents = documents
   }
 
@@ -32,24 +33,24 @@ export default class Collection {
 
   /**
    * Inserts a new document into the collection
-   * @param id Document ID
+   * @param documentID Document ID
    * @param rawData Data in Document body
    */
-  async insertDocument (id: string, rawData: Object) {
-    if (this.documents.has(id)) return Promise.reject(new Error(`Collection already has document with ID "${id}"`))
+  async insertDocument (documentID: string, rawData: Object) {
+    if (this.documents.has(documentID)) return Promise.reject(new Error(`Collection already has document with ID "${documentID}"`))
 
     try {
-      const messageContent = [`||DOCUMENT INSERTED AT ${new Date().toISOString()}||`, id, '---', JSON.stringify(rawData)]
-      const message = await this.#channel.send(messageContent.join('\n'))
+      const messageContent = [`||DOCUMENT INSERTED AT ${new Date().toISOString()}||`, documentID, '---', JSON.stringify(rawData)]
+      const message = await this.#client.createMessage(this.id, messageContent.join('\n'))
 
       const data = {
         information: rawData,
         message,
-        id
+        id: documentID
       }
 
-      const document = new Document(data)
-      this.documents.set(id, document)
+      const document = new Document(this.#client, data)
+      this.documents.set(documentID, document)
       return document
     } catch (error) {
       return Promise.reject(error)

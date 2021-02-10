@@ -1,16 +1,29 @@
 import Collection from './Collection'
 import Document from './Document'
-import * as Discord from 'discord.js'
+import Discord, { Snowflake, Message } from '../helper/discord'
 
 export default class DB {
-  client
+  client: Discord
 
   /**
-   * Initializes a DB instance
-   * @param client
+   * Discord bot access token
+   * @param accessToken
    */
-  constructor (client: Discord.Client) {
-    this.client = client
+  constructor (accessToken: string) {
+    this.client = new Discord(accessToken, false)
+  }
+
+  /**
+   * Creates a collection in the database
+   * @returns Created collection
+   */
+  async createCollection (database: Snowflake, referenceName: string): Promise<Collection> {
+    try {
+      const channel = await this.client.createChannel(database, referenceName)
+      return await this.getCollection(channel.id)
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
   /**
@@ -18,20 +31,18 @@ export default class DB {
    * @param collection
    * @returns Requested collection
    */
-  async getCollection (collection: Discord.Snowflake): Promise<Collection> {
+  async getCollection (collection: Snowflake): Promise<Collection> {
     try {
-      const channel = await this.client.channels.fetch(collection) as Discord.TextChannel
-      const messages = (await channel.messages.fetch({ limit: 100 }))
-        .filter((m: Discord.Message) => m.author.id === this.client.user?.id)
+      const messages = await this.client.getMessages(collection)
 
-      const data: Map<Discord.Snowflake, Document> = new Map()
-      messages.each((message: Discord.Message) => {
-        const document = parseMessage(message, collection)
+      const data = new Map<Snowflake, Document>()
+      messages.forEach((message: Message) => {
+        const document = parseMessage(this.client, message)
         if (!document) return
         data.set(document.id, document)
       })
 
-      return new Collection(channel, data)
+      return new Collection(this.client, collection, data)
     } catch (error) {
       return Promise.reject(error)
     }
@@ -43,9 +54,9 @@ export default class DB {
  * @param message
  * @returns A document
  */
-function parseMessage (message: Discord.Message, collection: Discord.Snowflake): Document {
+function parseMessage (client: Discord, message: Message): Document {
   const tokens = message.content.split('\n')
-  return new Document({
+  return new Document(client, {
     information: JSON.parse(tokens[3]),
     message,
     id: tokens[1]

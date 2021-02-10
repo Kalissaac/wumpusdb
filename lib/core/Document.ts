@@ -1,5 +1,5 @@
 // import type Collection from './Collection'
-import type { Message as DiscordMessage } from 'discord.js'
+import Discord, { Message as DiscordMessage } from '../helper/discord'
 
 interface RawDocumentData {
   information: { [key: string]: any },
@@ -14,13 +14,19 @@ export default class Document {
   lastEdited
   #data
   #message
+  #client
 
-  constructor (data: RawDocumentData) {
+  /**
+   * @param client Discord client
+   * @param data Raw data of the document
+   */
+  constructor (client: Discord, data: RawDocumentData) {
+    this.#client = client
     this.id = data.id
     this.#message = data.message
-    this.collection = this.#message.channel.id
-    this.createdAt = this.#message.createdAt
-    this.lastEdited = this.#message.editedAt
+    this.collection = this.#message.channel_id
+    this.createdAt = this.#message.timestamp
+    this.lastEdited = this.#message.edited_timestamp
     this.#data = data.information
   }
 
@@ -42,7 +48,7 @@ export default class Document {
       const newContent = this.#message.content.split('\n')
       newContent.pop()
       newContent.push(JSON.stringify(data))
-      this.#message.edit(newContent.join('\n'))
+      await this.#client.editMessage(this.collection, this.#message.id, newContent.join('\n'))
       this.#data = data
       return true
     } catch (error) {
@@ -56,9 +62,7 @@ export default class Document {
    */
   async delete (): Promise<boolean> {
     try {
-      this.#message.delete({
-        reason: 'Document deleted from DB'
-      })
+      await this.#client.deleteMessage(this.collection, this.#message.id)
       return true
     } catch (error) {
       return Promise.reject(error)
